@@ -1,7 +1,7 @@
 package com.example.IterationProject.Entity;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "valute_course")
@@ -12,12 +12,17 @@ public class ValuteCourse {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "valute_name", referencedColumnName = "name")
+    @JoinColumn(name = "valute_id", referencedColumnName = "id")
     private Valute valute;
 
+    @Column(columnDefinition = "INT NOT NULL")
+    private Integer nominal;
+
+    @Column(columnDefinition = "REAL NOT NULL")
     private Double value;
 
-    private Date date;
+    @Column(columnDefinition = "DATE NOT NULL")
+    private LocalDate date;
 
     public Integer getId() {
         return id;
@@ -35,6 +40,14 @@ public class ValuteCourse {
         this.valute = valute;
     }
 
+    public Integer getNominal() {
+        return nominal;
+    }
+
+    public void setNominal(Integer nominal) {
+        this.nominal = nominal;
+    }
+
     public Double getValue() {
         return value;
     }
@@ -43,11 +56,11 @@ public class ValuteCourse {
         this.value = value;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 }

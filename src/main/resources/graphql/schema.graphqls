@@ -1,0 +1,18 @@
+type Query {
+    converteValute(inputName: String!, outputName: String!, inputData: Float!): Float
+    avgCourse(inputName: String!, outputName: String!): Float
+    numberOfConversion(inputName: String!, outputName: String!): Int
+    historyOfConversion(inputName: String!, outputName: String!): [ConvertionHistory]
+}
+
+scalar LocalDate
+
+type ConvertionHistory {
+   id: ID!,
+   haveValute: String!,
+   wantValute: String!,
+   haveValue: Float!,
+   wantValue: Float!,
+   course: Float!,
+   date: LocalDate
+}

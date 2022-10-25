@@ -1,10 +1,6 @@
 package com.example.IterationProject.DataFromXML;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Date;
+import javax.xml.bind.annotation.*;
 import java.util.List;
 
 @XmlRootElement(name = "ValCurs")
@@ -13,8 +9,8 @@ public class ValuteCurs {
 
     @XmlElement(name = "Valute")
     private List<DataValute> valute;
-    @XmlElement(name = "Date")
-    private Date date;
+    @XmlAttribute(name = "Date")
+    private String date;
 
     public List<DataValute> getValute() {
         return valute;
@@ -24,11 +20,11 @@ public class ValuteCurs {
         this.valute = valute;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }

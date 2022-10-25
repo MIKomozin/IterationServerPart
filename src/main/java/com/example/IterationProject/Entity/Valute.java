@@ -8,6 +8,9 @@ import java.util.List;
 public class Valute {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     @Column(columnDefinition = "VARCHAR(128) NOT NULL")
     private String name;
 
@@ -17,12 +20,16 @@ public class Valute {
     @Column(name = "char_code", columnDefinition = "VARCHAR(5) NOT NULL")
     private String charCode;
 
-    @Column(columnDefinition = "INT NOT NULL")
-    private Integer nominal;
-
     @OneToMany(mappedBy = "valute")
     List<ValuteCourse> valuteCourseList;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -46,14 +53,6 @@ public class Valute {
 
     public void setCharCode(String charCode) {
         this.charCode = charCode;
-    }
-
-    public Integer getNominal() {
-        return nominal;
-    }
-
-    public void setNominal(Integer nominal) {
-        this.nominal = nominal;
     }
 
     public List<ValuteCourse> getValuteCourseList() {

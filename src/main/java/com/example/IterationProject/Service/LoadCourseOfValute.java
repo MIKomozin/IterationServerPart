@@ -6,12 +6,15 @@ import org.springframework.web.client.RestTemplate;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Component
 public class LoadCourseOfValute {
 
-    public ValuteCurs getCourseOfValute() {
+    //метод добавления актуальных данных в БД при загрузке приложения
+    public ValuteCurs getCourseOfValutes() {
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String strDate = dateFormat.format(date);
@@ -29,4 +32,15 @@ public class LoadCourseOfValute {
 
         return courseOfValute;
     }
+
+    //метод добавления данных в БД на определенную дату
+    public ValuteCurs getCourseOfValutesByDate(LocalDate date) {
+        String strDate = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String url_with_date = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=" + strDate;
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        return restTemplate.getForObject(url_with_date, ValuteCurs.class);
+    }
+
 }

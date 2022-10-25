@@ -10,13 +10,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class DataValute {
 
     @XmlElement(name = "NumCode")
-    private String numCode;
+    private Integer numCode;
 
     @XmlElement(name = "CharCode")
     private String charCode;
 
     @XmlElement(name = "Nominal")
-    private String nominal;
+    private Integer nominal;
 
     @XmlElement(name = "Name")
     private String name;
@@ -24,11 +24,11 @@ public class DataValute {
     @XmlElement(name = "Value")
     private String value;
 
-    public String getNumCode() {
+    public Integer getNumCode() {
         return numCode;
     }
 
-    public void setNumCode(String numCode) {
+    public void setNumCode(Integer numCode) {
         this.numCode = numCode;
     }
 
@@ -40,11 +40,11 @@ public class DataValute {
         this.charCode = charCode;
     }
 
-    public String getNominal() {
+    public Integer getNominal() {
         return nominal;
     }
 
-    public void setNominal(String nominal) {
+    public void setNominal(Integer nominal) {
         this.nominal = nominal;
     }
 
