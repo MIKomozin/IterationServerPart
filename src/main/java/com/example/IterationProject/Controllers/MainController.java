@@ -25,28 +25,28 @@ public class MainController {
     }
 
     @QueryMapping(name = "converteValute")
-    public Double converteValute(@Argument String inputName,
-                                 @Argument String outputName,
+    public Double converteValute(@Argument String inputCharCode,
+                                 @Argument String outputCharCode,
                                  @Argument double inputData) {
-        return valuteService.getConverterValute(inputName, outputName, inputData);
+        return valuteService.getConverterValute(inputCharCode, outputCharCode, inputData);
     }
 
     @QueryMapping(name = "avgCourse")
-    public Double avgCourse(@Argument String inputName,
-                            @Argument String outputName) {
-        return valuteService.getAvgCourse(inputName, outputName);
+    public Double avgCourse(@Argument String inputCharCode,
+                            @Argument String outputCharCode) {
+        return valuteService.getAvgCourse(inputCharCode, outputCharCode);
     }
 
-    @QueryMapping(name = "numberOfConversion")
-    public Integer numberOfConversion(@Argument String inputName,
-                                      @Argument String outputName) {
-        return valuteService.getNumberOfConvertion(inputName, outputName);
+    @QueryMapping(name = "numberOfConvertion")
+    public Integer numberOfConvertion(@Argument String inputCharCode,
+                                      @Argument String outputCharCode) {
+        return valuteService.getNumberOfConvertion(inputCharCode, outputCharCode);
     }
 
-    @QueryMapping(name = "historyOfConversion")
-    List<ConvertionHistory> historyOfConversion(@Argument String inputName,
-                                                @Argument String outputName) {
-        return valuteService.getHistoryOfConvertion(inputName, outputName);
+    @QueryMapping(name = "historyOfConvertion")
+    List<ConvertionHistory> historyOfConvertion(@Argument String inputCharCode,
+                                                @Argument String outputCharCode) {
+        return valuteService.getHistoryOfConvertion(inputCharCode, outputCharCode);
     }
 
 }

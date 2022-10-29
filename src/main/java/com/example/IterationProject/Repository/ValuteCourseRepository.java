@@ -15,6 +15,10 @@ public interface ValuteCourseRepository extends JpaRepository<ValuteCourse, Inte
 
     @Query(value = "SELECT valute_course.id AS id, valute_id, nominal, value, date FROM valute_course " +
             "JOIN valutes ON valute_id = valutes.id " +
-            "WHERE name = ?1 AND date = ?2", nativeQuery = true)
-    ValuteCourse findValuteCourseByNameAndDate(String name, LocalDate date);
+            "WHERE char_code = ?1 AND date = ?2", nativeQuery = true)
+    ValuteCourse findValuteCourseByCharCodeAndDate(String charCode, LocalDate date);
+
+    @Query(value = "SELECT * FROM valute_course ORDER BY date DESC LIMIT 1", nativeQuery = true)
+    ValuteCourse findValuteCourseWithActualDate();
+
 }

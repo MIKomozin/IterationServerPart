@@ -1,8 +1,8 @@
 type Query {
-    converteValute(inputName: String!, outputName: String!, inputData: Float!): Float
-    avgCourse(inputName: String!, outputName: String!): Float
-    numberOfConversion(inputName: String!, outputName: String!): Int
-    historyOfConversion(inputName: String!, outputName: String!): [ConvertionHistory]
+    converteValute(inputCharCode: String!, outputCharCode: String!, inputData: Float!): Float
+    avgCourse(inputCharCode: String!, outputCharCode: String!): Float
+    numberOfConvertion(inputCharCode: String!, outputCharCode: String!): Int
+    historyOfConvertion(inputCharCode: String!, outputCharCode: String!): [ConvertionHistory]
 }
 
 scalar LocalDate

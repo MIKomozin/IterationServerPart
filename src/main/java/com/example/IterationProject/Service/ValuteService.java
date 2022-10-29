@@ -62,30 +62,40 @@ public class ValuteService {
         }
     }
 
-    //метод добавления данных по курсу валют с сайта в БД на определенную дату
-    public void addDataInDataBaseWithDate(LocalDate date) {
+    //метод добавления данных по курсу валют с сайта в БД на текущую дату
+    public boolean addDataInDataBaseWithDate(LocalDate date) {
         List<DataValute> dataValuteList = loadCourseOfValute.getCourseOfValutesByDate(date).getValute();
-        for (DataValute dataValute : dataValuteList) {
-            ValuteCourse valuteCourse = new ValuteCourse();
-            valuteCourse.setValute(valuteRepository.findValuteByName(dataValute.getName()));
-            valuteCourse.setNominal(dataValute.getNominal());
-            valuteCourse.setValue(Double.parseDouble(dataValute.getValue().replace(",",".")));
-            valuteCourse.setDate(date);
-            valuteCourseRepository.save(valuteCourse);
+        if (dataValuteList == null) {
+            return false;
+        } else {
+            for (DataValute dataValute : dataValuteList) {
+                ValuteCourse valuteCourse = new ValuteCourse();
+                valuteCourse.setValute(valuteRepository.findValuteByName(dataValute.getName()));
+                valuteCourse.setNominal(dataValute.getNominal());
+                valuteCourse.setValue(Double.parseDouble(dataValute.getValue().replace(",", ".")));
+                valuteCourse.setDate(date);
+                valuteCourseRepository.save(valuteCourse);
+            }
+            return true;
         }
     }
 
-    //метода для конвертирования валют, где inputName наименование входной валюты, inputData - ее количестов
-    //outputName - наименование необходимой нам валюты. Можем выбрать на какую дату рассчитать курс валют
-    public Double getConverterValute(String inputName, String outputName, double inputData) {
+    //метода для конвертирования валют, где inputCharCode charCode входной валюты, inputData - ее количестов
+    //outputCharCode - charCode необходимой нам валюты
+    public Double getConverterValute(String inputCharCode, String outputCharCode, double inputData) {
+        boolean addActualData = false;
         LocalDate date = LocalDate.now();
-        //если курсва валют на данную дату нет, то добавляем его
+        //если курса валют на данную дату нет, то добавляем его
         if (getValuteCoursesByDate(date) == null) {
-            addDataInDataBaseWithDate(date);
+            addActualData = addDataInDataBaseWithDate(date);
+        }
+        //проверяем добавили имеется ла в ЦБ курс валют на текущую дату и если нет, то конвертируем по крайней дате
+        if (!addActualData) {
+            date = valuteCourseRepository.findValuteCourseWithActualDate().getDate();
         }
         double result = 0.0;
-        ValuteCourse inputValute = valuteCourseRepository.findValuteCourseByNameAndDate(inputName, date);
-        ValuteCourse outputValute = valuteCourseRepository.findValuteCourseByNameAndDate(outputName, date);
+        ValuteCourse inputValute = valuteCourseRepository.findValuteCourseByCharCodeAndDate(inputCharCode, date);
+        ValuteCourse outputValute = valuteCourseRepository.findValuteCourseByCharCodeAndDate(outputCharCode, date);
         if (inputValute != null && outputValute != null) {
             double inValue = inputValute.getValue();
             double outValue = outputValute.getValue();
@@ -97,8 +107,8 @@ public class ValuteService {
             result = inputData * relation;
             //дабавляем данную операцию в историю
             ConvertionHistory convertionHistory = new ConvertionHistory();
-            convertionHistory.setHaveValute(inputName);
-            convertionHistory.setWantValute(outputName);
+            convertionHistory.setHaveValute(inputCharCode);
+            convertionHistory.setWantValute(outputCharCode);
             convertionHistory.setHaveValue(inputData);
             convertionHistory.setWantValue(result);
             convertionHistory.setCourse(relation);
@@ -109,18 +119,18 @@ public class ValuteService {
     }
 
     //метод ля подсчета среднего курса конвертации указанных пар валют за неделю
-    public Double getAvgCourse(String inputName, String outputName) {
-        return convertionHistoryRepository.findAvgCourse(inputName, outputName);
+    public Double getAvgCourse(String inputCharCode, String outputCharCode) {
+        return convertionHistoryRepository.findAvgCourse(inputCharCode, outputCharCode);
     }
 
     //метод для подсчета суммарнго объёма конвертаций по каждой паре за неделю
-    public Integer getNumberOfConvertion(String inputName, String outputName) {
-        return convertionHistoryRepository.findNumberOfConvertion(inputName, outputName);
+    public Integer getNumberOfConvertion(String inputCharCode, String outputCharCode) {
+        return convertionHistoryRepository.findNumberOfConvertion(inputCharCode, outputCharCode);
     }
 
     //метод для просмотра истории конвертации для указанных пар валют
-    public List<ConvertionHistory> getHistoryOfConvertion(String inputName, String outputName) {
-        return convertionHistoryRepository.findHistoryOfConvertion(inputName, outputName);
+    public List<ConvertionHistory> getHistoryOfConvertion(String inputCharCode, String outputCharCode) {
+        return convertionHistoryRepository.findHistoryOfConvertion(inputCharCode, outputCharCode);
     }
 
     public Valute getValuteByName(String name) {
@@ -131,6 +141,7 @@ public class ValuteService {
         return valuteCourseRepository.findValuteCourseByValuteAndDate(valute, date);
     }
 
+    //метод проверки кураса валют на определенную дату
     public List<ValuteCourse> getValuteCoursesByDate(LocalDate date) {
         return valuteCourseRepository.findValuteCoursesByDate(date);
     }
