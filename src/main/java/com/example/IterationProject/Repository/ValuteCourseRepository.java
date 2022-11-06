@@ -11,6 +11,7 @@ import java.util.List;
 public interface ValuteCourseRepository extends JpaRepository<ValuteCourse, Integer> {
     ValuteCourse findValuteCourseByValuteAndDate(Valute valute, LocalDate date);
 
+    @Query(value = "SELECT * FROM valute_course WHERE date = ?1", nativeQuery = true)
     List<ValuteCourse> findValuteCoursesByDate(LocalDate date);
 
     @Query(value = "SELECT valute_course.id AS id, valute_id, nominal, value, date FROM valute_course " +

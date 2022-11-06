@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class ValuteService {
@@ -65,7 +68,7 @@ public class ValuteService {
     //метод добавления данных по курсу валют с сайта в БД на текущую дату
     public boolean addDataInDataBaseWithDate(LocalDate date) {
         List<DataValute> dataValuteList = loadCourseOfValute.getCourseOfValutesByDate(date).getValute();
-        if (dataValuteList == null) {
+        if (dataValuteList.size() == 0) {
             return false;
         } else {
             for (DataValute dataValute : dataValuteList) {
@@ -86,7 +89,7 @@ public class ValuteService {
         boolean addActualData = false;
         LocalDate date = LocalDate.now();
         //если курса валют на данную дату нет, то добавляем его
-        if (getValuteCoursesByDate(date) == null) {
+        if (getValuteCoursesByDate(date).size() == 0) {
             addActualData = addDataInDataBaseWithDate(date);
         }
         //проверяем добавили имеется ла в ЦБ курс валют на текущую дату и если нет, то конвертируем по крайней дате
@@ -120,17 +123,27 @@ public class ValuteService {
 
     //метод ля подсчета среднего курса конвертации указанных пар валют за неделю
     public Double getAvgCourse(String inputCharCode, String outputCharCode) {
-        return convertionHistoryRepository.findAvgCourse(inputCharCode, outputCharCode);
+        Logger.getLogger(this.getClass().getSimpleName()).info(LocalDate.now().minusDays(7).toString());
+        return convertionHistoryRepository.findListOfPairValutes(inputCharCode, outputCharCode).stream()
+                .filter(convertionHistory ->
+                        convertionHistory.getDate().isAfter(LocalDate.now().minusDays(7)))
+                .mapToDouble(ConvertionHistory::getCourse)
+                .average().getAsDouble();
     }
 
     //метод для подсчета суммарнго объёма конвертаций по каждой паре за неделю
-    public Integer getNumberOfConvertion(String inputCharCode, String outputCharCode) {
-        return convertionHistoryRepository.findNumberOfConvertion(inputCharCode, outputCharCode);
+    public Long getNumberOfConvertion(String inputCharCode, String outputCharCode) {
+        return convertionHistoryRepository.findListOfPairValutes(inputCharCode, outputCharCode).stream()
+                .filter(convertionHistory ->
+                        convertionHistory.getDate().isAfter(LocalDate.now().minusDays(7)))
+                .count();
     }
 
     //метод для просмотра истории конвертации для указанных пар валют
     public List<ConvertionHistory> getHistoryOfConvertion(String inputCharCode, String outputCharCode) {
-        return convertionHistoryRepository.findHistoryOfConvertion(inputCharCode, outputCharCode);
+        return convertionHistoryRepository.findListOfPairValutes(inputCharCode, outputCharCode).stream()
+                .sorted(Comparator.comparing(ConvertionHistory::getDate).reversed())
+                .collect(Collectors.toList());
     }
 
     public Valute getValuteByName(String name) {
@@ -141,7 +154,7 @@ public class ValuteService {
         return valuteCourseRepository.findValuteCourseByValuteAndDate(valute, date);
     }
 
-    //метод проверки кураса валют на определенную дату
+    //метод проверки курса валют на определенную дату
     public List<ValuteCourse> getValuteCoursesByDate(LocalDate date) {
         return valuteCourseRepository.findValuteCoursesByDate(date);
     }

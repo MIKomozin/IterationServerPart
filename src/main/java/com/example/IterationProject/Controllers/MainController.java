@@ -38,7 +38,7 @@ public class MainController {
     }
 
     @QueryMapping(name = "numberOfConvertion")
-    public Integer numberOfConvertion(@Argument String inputCharCode,
+    public Long numberOfConvertion(@Argument String inputCharCode,
                                       @Argument String outputCharCode) {
         return valuteService.getNumberOfConvertion(inputCharCode, outputCharCode);
     }
